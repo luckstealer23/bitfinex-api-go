@@ -45,9 +45,10 @@ const (
 	BCUUSD = "BCUUSD"
 
 	// Channels
-	ChanBook   = "book"
-	ChanTrade  = "trades"
-	ChanTicker = "ticker"
+	ChanBook    = "book"
+	ChanTrade   = "trades"
+	ChanTicker  = "ticker"
+	ChanRawBook = "rawbook"
 )
 
 // WebSocketService allow to connect and receive stream data
@@ -69,12 +70,14 @@ type subscribeMsg struct {
 	Channel string  `json:"channel"`
 	Pair    string  `json:"pair"`
 	ChanID  float64 `json:"chanId,omitempty"`
+	Prec    string  `json:"prec"`
 }
 
 type subscribeToChannel struct {
 	Channel string
 	Pair    string
 	Chan    chan []float64
+	Prec    string
 }
 
 // NewWebSocketService returns a WebSocketService using the given client.
