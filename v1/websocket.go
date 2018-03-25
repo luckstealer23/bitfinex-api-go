@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/bitfinexcom/bitfinex-api-go/utils"
+	"github.com/luckstealer23/bitfinex-api-go/utils"
 
 	"github.com/gorilla/websocket"
 )
@@ -116,10 +116,16 @@ func (w *WebSocketService) Close() {
 }
 
 func (w *WebSocketService) AddSubscribe(channel string, pair string, c chan []float64) {
+	prec := "P0"
+	if channel == "rawbook" {
+		prec = "R0"
+		channel = "book"
+	}
 	s := subscribeToChannel{
 		Channel: channel,
 		Pair:    pair,
 		Chan:    c,
+		Prec:    prec,
 	}
 	w.subscribes = append(w.subscribes, s)
 }
@@ -134,6 +140,7 @@ func (w *WebSocketService) sendSubscribeMessages() error {
 			Event:   "subscribe",
 			Channel: s.Channel,
 			Pair:    s.Pair,
+			Prec:    s.Prec,
 		})
 
 		err := w.ws.WriteMessage(websocket.TextMessage, msg)
