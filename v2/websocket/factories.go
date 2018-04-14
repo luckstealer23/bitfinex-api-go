@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"github.com/bitfinexcom/bitfinex-api-go/v2"
+	"github.com/luckstealer23/bitfinex-api-go/v2"
 )
 
 type messageFactory interface {
@@ -22,7 +22,7 @@ func newTickerFactory(subs *subscriptions) *TickerFactory {
 func (f *TickerFactory) Build(chanID int64, objType string, raw []interface{}) (interface{}, error) {
 	sub, err := f.subscriptions.lookupByChannelID(chanID)
 	if err == nil {
-		tick, err := bitfinex.NewTickerFromRaw(sub.Request.Symbol, raw)
+		tick, err := bitfinex.NewTickerFromRaw(chanID, sub.Request.Symbol, raw)
 		return tick, err
 	}
 	return nil, err
@@ -31,7 +31,7 @@ func (f *TickerFactory) Build(chanID int64, objType string, raw []interface{}) (
 func (f *TickerFactory) BuildSnapshot(chanID int64, raw [][]float64) (interface{}, error) {
 	sub, err := f.subscriptions.lookupByChannelID(chanID)
 	if err == nil {
-		return bitfinex.NewTickerSnapshotFromRaw(sub.Request.Symbol, raw)
+		return bitfinex.NewTickerSnapshotFromRaw(chanID, sub.Request.Symbol, raw)
 	}
 	return nil, err
 }
@@ -79,7 +79,7 @@ func newBookFactory(subs *subscriptions) *BookFactory {
 func (f *BookFactory) Build(chanID int64, objType string, raw []interface{}) (interface{}, error) {
 	sub, err := f.subscriptions.lookupByChannelID(chanID)
 	if err == nil {
-		update, err := bitfinex.NewBookUpdateFromRaw(sub.Request.Symbol, sub.Request.Precision, raw)
+		update, err := bitfinex.NewBookUpdateFromRaw(chanID, sub.Request.Symbol, sub.Request.Precision, raw)
 		return update, err
 	}
 	return nil, err
@@ -88,7 +88,7 @@ func (f *BookFactory) Build(chanID int64, objType string, raw []interface{}) (in
 func (f *BookFactory) BuildSnapshot(chanID int64, raw [][]float64) (interface{}, error) {
 	sub, err := f.subscriptions.lookupByChannelID(chanID)
 	if err == nil {
-		return bitfinex.NewBookUpdateSnapshotFromRaw(sub.Request.Symbol, sub.Request.Precision, raw)
+		return bitfinex.NewBookUpdateSnapshotFromRaw(chanID, sub.Request.Symbol, sub.Request.Precision, raw)
 	}
 	return nil, err
 }

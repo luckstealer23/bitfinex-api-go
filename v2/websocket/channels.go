@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bitfinexcom/bitfinex-api-go/v2"
+	"github.com/luckstealer23/bitfinex-api-go/v2"
 )
 
 func (c *Client) handleChannel(msg []byte) error {
@@ -108,12 +108,20 @@ func (c *Client) handlePrivateChannel(raw []interface{}) error {
 				}
 				// private data is returned as strongly typed data, publish directly
 				if obj != nil {
-					c.listener <- obj
+					c.listener <- &Response{
+						Term: raw[1].(string),
+						Data: obj,
+					}
 				}
 			}
 		}
 	}
 	return nil
+}
+
+type Response struct {
+	Term string
+	Data interface{}
 }
 
 func (c *Client) handleHeartbeat(chanID int64) {

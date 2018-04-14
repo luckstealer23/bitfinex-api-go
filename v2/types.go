@@ -1166,6 +1166,7 @@ func NewNotificationFromRaw(raw []interface{}) (o *Notification, err error) {
 }
 
 type Ticker struct {
+	ChanID          int64
 	Symbol          string
 	Bid             float64
 	BidPeriod       int64
@@ -1186,13 +1187,13 @@ type TickerSnapshot struct {
 	Snapshot []*Ticker
 }
 
-func NewTickerSnapshotFromRaw(symbol string, raw [][]float64) (*TickerSnapshot, error) {
+func NewTickerSnapshotFromRaw(chanID int64, symbol string, raw [][]float64) (*TickerSnapshot, error) {
 	if len(raw) <= 0 {
 		return nil, fmt.Errorf("data slice too short for ticker snapshot: %#v", raw)
 	}
 	snap := make([]*Ticker, 0)
 	for _, f := range raw {
-		c, err := NewTickerFromRaw(symbol, ToInterface(f))
+		c, err := NewTickerFromRaw(chanID, symbol, ToInterface(f))
 		if err == nil {
 			snap = append(snap, c)
 		}
@@ -1200,12 +1201,13 @@ func NewTickerSnapshotFromRaw(symbol string, raw [][]float64) (*TickerSnapshot, 
 	return &TickerSnapshot{Snapshot: snap}, nil
 }
 
-func NewTickerFromRaw(symbol string, raw []interface{}) (t *Ticker, err error) {
+func NewTickerFromRaw(chanID int64, symbol string, raw []interface{}) (t *Ticker, err error) {
 	if len(raw) < 10 {
 		return t, fmt.Errorf("data slice too short for ticker, expected %d got %d: %#v", 10, len(raw), raw)
 	}
 
 	t = &Ticker{
+		ChanID:          chanID,
 		Symbol:          symbol,
 		Bid:             f64ValOrZero(raw[0]),
 		BidSize:         f64ValOrZero(raw[1]),
@@ -1236,6 +1238,7 @@ const (
 
 // BookUpdate represents an order book price update.
 type BookUpdate struct {
+	ChanID int64
 	Symbol string
 	Price  float64
 	Count  int64
@@ -1248,13 +1251,13 @@ type BookUpdateSnapshot struct {
 	Snapshot []*BookUpdate
 }
 
-func NewBookUpdateSnapshotFromRaw(symbol, precision string, raw [][]float64) (*BookUpdateSnapshot, error) {
+func NewBookUpdateSnapshotFromRaw(chanID int64, symbol, precision string, raw [][]float64) (*BookUpdateSnapshot, error) {
 	if len(raw) <= 0 {
 		return nil, fmt.Errorf("data slice too short for book snapshot: %#v", raw)
 	}
 	snap := make([]*BookUpdate, 0)
 	for _, f := range raw {
-		b, err := NewBookUpdateFromRaw(symbol, precision, ToInterface(f))
+		b, err := NewBookUpdateFromRaw(chanID, symbol, precision, ToInterface(f))
 		if err == nil {
 			snap = append(snap, b)
 		}
@@ -1268,7 +1271,7 @@ func IsRawBook(precision string) bool {
 
 // NewBookUpdateFromRaw creates a new book update object from raw data.  Precision determines how
 // to interpret the side (baked into Count versus Amount)
-func NewBookUpdateFromRaw(symbol, precision string, raw []interface{}) (b *BookUpdate, err error) {
+func NewBookUpdateFromRaw(chanID int64, symbol, precision string, raw []interface{}) (b *BookUpdate, err error) {
 	if len(raw) < 3 {
 		return b, fmt.Errorf("data slice too short for book update, expected %d got %d: %#v", 5, len(raw), raw)
 	}
@@ -1299,6 +1302,7 @@ func NewBookUpdateFromRaw(symbol, precision string, raw []interface{}) (b *BookU
 	}
 
 	b = &BookUpdate{
+		ChanID: chanID,
 		Symbol: symbol,
 		Price:  math.Abs(px),
 		Count:  cnt,
