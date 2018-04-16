@@ -388,6 +388,7 @@ func NewPositionSnapshotFromRaw(raw []interface{}) (s *PositionSnapshot, err err
 
 // Trade represents a trade on the public data feed.
 type Trade struct {
+	ChanID int64
 	Pair   string
 	ID     int64
 	MTS    int64
@@ -396,7 +397,7 @@ type Trade struct {
 	Side   OrderSide
 }
 
-func NewTradeFromRaw(pair string, raw []interface{}) (o *Trade, err error) {
+func NewTradeFromRaw(chanID int64, pair string, raw []interface{}) (o *Trade, err error) {
 	if len(raw) < 4 {
 		return o, fmt.Errorf("data slice too short for trade: %#v", raw)
 	}
@@ -410,6 +411,7 @@ func NewTradeFromRaw(pair string, raw []interface{}) (o *Trade, err error) {
 	}
 
 	o = &Trade{
+		ChanID: chanID,
 		Pair:   pair,
 		ID:     i64ValOrZero(raw[0]),
 		MTS:    i64ValOrZero(raw[1]),
@@ -425,13 +427,13 @@ type TradeSnapshot struct {
 	Snapshot []*Trade
 }
 
-func NewTradeSnapshotFromRaw(pair string, raw [][]float64) (*TradeSnapshot, error) {
+func NewTradeSnapshotFromRaw(chanID int64, pair string, raw [][]float64) (*TradeSnapshot, error) {
 	if len(raw) <= 0 {
 		return nil, fmt.Errorf("data slice is too short for trade snapshot: %#v", raw)
 	}
 	snapshot := make([]*Trade, 0)
 	for _, flt := range raw {
-		t, err := NewTradeFromRaw(pair, ToInterface(flt))
+		t, err := NewTradeFromRaw(chanID, pair, ToInterface(flt))
 		if err == nil {
 			snapshot = append(snapshot, t)
 		}

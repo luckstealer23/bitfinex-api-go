@@ -52,7 +52,7 @@ func (f *TradeFactory) Build(chanID int64, objType string, raw []interface{}) (i
 		return nil, nil // do not process TradeUpdate messages on public feed, only need to process TradeExecution (first copy seen)
 	}
 	if err == nil {
-		trade, err := bitfinex.NewTradeFromRaw(sub.Request.Symbol, raw)
+		trade, err := bitfinex.NewTradeFromRaw(chanID, sub.Request.Symbol, raw)
 		return trade, err
 	}
 	return nil, err
@@ -61,7 +61,7 @@ func (f *TradeFactory) Build(chanID int64, objType string, raw []interface{}) (i
 func (f *TradeFactory) BuildSnapshot(chanID int64, raw [][]float64) (interface{}, error) {
 	sub, err := f.subscriptions.lookupByChannelID(chanID)
 	if err == nil {
-		return bitfinex.NewTradeSnapshotFromRaw(sub.Request.Symbol, raw)
+		return bitfinex.NewTradeSnapshotFromRaw(chanID, sub.Request.Symbol, raw)
 	}
 	return nil, err
 }
