@@ -91,7 +91,10 @@ func (c *Client) handleEvent(msg []byte) error {
 			return err
 		}
 		c.handleOpen()
-		c.listener <- &i
+		c.listener <- &Response{
+			Term: "info",
+			Data: &i,
+		}
 	case "auth":
 		a := AuthEvent{}
 		err = json.Unmarshal(msg, &a)
@@ -104,7 +107,10 @@ func (c *Client) handleEvent(msg []byte) error {
 			c.Authentication = RejectedAuthentication
 		}
 		c.handleAuthAck(&a)
-		c.listener <- &a
+		c.listener <- &Response{
+			Term: "auth",
+			Data: &a,
+		}
 		return nil
 	case "subscribed":
 		s := SubscribeEvent{}
@@ -116,7 +122,10 @@ func (c *Client) handleEvent(msg []byte) error {
 		if err != nil {
 			return err
 		}
-		c.listener <- &s
+		c.listener <- &Response{
+			Term: "subscribed",
+			Data: &s,
+		}
 		return nil
 	case "unsubscribed":
 		s := UnsubscribeEvent{}
@@ -125,21 +134,30 @@ func (c *Client) handleEvent(msg []byte) error {
 			return err
 		}
 		c.subscriptions.removeByChannelID(s.ChanID)
-		c.listener <- &s
+		c.listener <- &Response{
+			Term: "unsubscribed",
+			Data: &s,
+		}
 	case "error":
 		er := ErrorEvent{}
 		err = json.Unmarshal(msg, &er)
 		if err != nil {
 			return err
 		}
-		c.listener <- &er
+		c.listener <- &Response{
+			Term: "error",
+			Data: &er,
+		}
 	case "conf":
 		ec := ConfEvent{}
 		err = json.Unmarshal(msg, &ec)
 		if err != nil {
 			return err
 		}
-		c.listener <- &ec
+		c.listener <- &Response{
+			Term: "conf",
+			Data: &ec,
+		}
 	default:
 		return fmt.Errorf("unknown event: %s", msg) // TODO: or just log?
 	}
