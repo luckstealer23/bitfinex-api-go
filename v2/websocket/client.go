@@ -127,7 +127,7 @@ type Client struct {
 	apiSecret          string
 	Authentication     AuthState
 	asynchronous       Asynchronous
-	nonce              utils.NonceGenerator
+	Nonce              utils.NonceGenerator
 	isConnected        bool
 	terminal           bool
 	resetSubscriptions []*subscription
@@ -201,7 +201,7 @@ func NewWithParamsAsyncFactoryNonce(params *Parameters, async AsynchronousFactor
 		Authentication: NoAuthentication,
 		factories:      make(map[string]messageFactory),
 		subscriptions:  newSubscriptions(params.HeartbeatTimeout),
-		nonce:          nonce,
+		Nonce:          nonce,
 		isConnected:    false,
 		parameters:     params,
 		listener:       make(chan interface{}),
@@ -443,7 +443,7 @@ func (c *Client) checkResubscription() {
 			if sub.Request.Event == "auth" {
 				continue
 			}
-			sub.Request.SubID = c.nonce.GetNonce() // new nonce
+			sub.Request.SubID = c.Nonce.GetNonce() // new Nonce
 			log.Printf("resubscribing to %s with nonce %s", sub.Request.String(), sub.Request.SubID)
 			_, err := c.Subscribe(context.Background(), sub.Request)
 			if err != nil {
@@ -493,7 +493,7 @@ func (c *Client) Unsubscribe(ctx context.Context, id string) error {
 // to the API. The filters will be applied to the authenticated channel, i.e.
 // only subscribe to the filtered messages.
 func (c *Client) authenticate(ctx context.Context, filter ...string) error {
-	nonce := c.nonce.GetNonce()
+	nonce := c.Nonce.GetNonce()
 
 	payload := "AUTH" + nonce
 	s := &SubscriptionRequest{
