@@ -253,22 +253,19 @@ func (c *Client) convertRaw(term string, raw []interface{}) interface{} {
 		if err != nil {
 			return err
 		}
-		on := bitfinex.OrderNew(*o)
-		return &on
+		return o
 	case "ou":
 		o, err := bitfinex.NewOrderFromRaw(raw)
 		if err != nil {
 			return err
 		}
-		ou := bitfinex.OrderUpdate(*o)
-		return &ou
+		return o
 	case "oc":
 		o, err := bitfinex.NewOrderFromRaw(raw)
 		if err != nil {
 			return err
 		}
-		oc := bitfinex.OrderCancel(*o)
-		return &oc
+		return o
 	case "hts":
 		o, err := bitfinex.NewTradeExecutionUpdateSnapshotFromRaw(raw)
 		if err != nil {

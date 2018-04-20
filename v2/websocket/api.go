@@ -15,7 +15,7 @@ func (c *Client) Send(ctx context.Context, msg interface{}) error {
 }
 
 // Subscribe sends a subscription request to the Bitfinex API and tracks the subscription status by ID.
-func (c *Client) Subscribe(ctx context.Context, req *SubscriptionRequest, subID string) (string, error) {
+func (c *Client) Subscribe(ctx context.Context, req *SubscriptionRequest) (string, error) {
 	c.subscriptions.add(req)
 	err := c.asynchronous.Send(ctx, req)
 	if err != nil {
