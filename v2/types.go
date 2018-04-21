@@ -191,6 +191,7 @@ const (
 	OrderStatusExecuted        OrderStatus = "EXECUTED"
 	OrderStatusPartiallyFilled OrderStatus = "PARTIALLY FILLED"
 	OrderStatusCanceled        OrderStatus = "CANCELED"
+	OrderStatusUnknown         OrderStatus = "UNKNOWN"
 )
 
 // Order as returned from the bitfinex websocket service.
@@ -226,7 +227,20 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 			Amount:     f64ValOrZero(raw[2]),
 			AmountOrig: f64ValOrZero(raw[3]),
 			Type:       sValOrEmpty(raw[4]),
-			Status:     OrderStatus(sValOrEmpty(raw[5])),
+			Status: func() OrderStatus {
+				switch sValOrEmpty(raw[5])[:1] {
+				case "A":
+					return OrderStatusActive
+				case "E":
+					return OrderStatusExecuted
+				case "P":
+					return OrderStatusPartiallyFilled
+				case "C":
+					return OrderStatusCanceled
+				default:
+					return OrderStatusUnknown
+				}
+			}(),
 			Price:      f64ValOrZero(raw[6]),
 			PriceAvg:   f64ValOrZero(raw[7]),
 			MTSUpdated: i64ValOrZero(raw[8]),
@@ -237,18 +251,31 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 	} else {
 		// TODO: API docs say ID, GID, CID, MTS_CREATE, MTS_UPDATE are int but API returns float
 		o = &Order{
-			ID:            int64(f64ValOrZero(raw[0])),
-			GID:           int64(f64ValOrZero(raw[1])),
-			CID:           int64(f64ValOrZero(raw[2])),
-			Symbol:        sValOrEmpty(raw[3]),
-			MTSCreated:    int64(f64ValOrZero(raw[4])),
-			MTSUpdated:    int64(f64ValOrZero(raw[5])),
-			Amount:        f64ValOrZero(raw[6]),
-			AmountOrig:    f64ValOrZero(raw[7]),
-			Type:          sValOrEmpty(raw[8]),
-			TypePrev:      sValOrEmpty(raw[9]),
-			Flags:         i64ValOrZero(raw[12]),
-			Status:        OrderStatus(sValOrEmpty(raw[13])),
+			ID:         int64(f64ValOrZero(raw[0])),
+			GID:        int64(f64ValOrZero(raw[1])),
+			CID:        int64(f64ValOrZero(raw[2])),
+			Symbol:     sValOrEmpty(raw[3]),
+			MTSCreated: int64(f64ValOrZero(raw[4])),
+			MTSUpdated: int64(f64ValOrZero(raw[5])),
+			Amount:     f64ValOrZero(raw[6]),
+			AmountOrig: f64ValOrZero(raw[7]),
+			Type:       sValOrEmpty(raw[8]),
+			TypePrev:   sValOrEmpty(raw[9]),
+			Flags:      i64ValOrZero(raw[12]),
+			Status: func() OrderStatus {
+				switch sValOrEmpty(raw[13])[:1] {
+				case "A":
+					return OrderStatusActive
+				case "E":
+					return OrderStatusExecuted
+				case "P":
+					return OrderStatusPartiallyFilled
+				case "C":
+					return OrderStatusCanceled
+				default:
+					return OrderStatusUnknown
+				}
+			}(),
 			Price:         f64ValOrZero(raw[16]),
 			PriceAvg:      f64ValOrZero(raw[17]),
 			PriceTrailing: f64ValOrZero(raw[18]),
