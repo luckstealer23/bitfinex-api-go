@@ -34,9 +34,9 @@ func (c *Client) Subscribe(ctx context.Context, req *SubscriptionRequest) (strin
 }
 
 // SubscribeTicker sends a subscription request for the ticker.
-func (c *Client) SubscribeTicker(ctx context.Context, symbol string) (string, error) {
+func (c *Client) SubscribeTicker(ctx context.Context, symbol, subID string) (string, error) {
 	req := &SubscriptionRequest{
-		SubID:   c.nonce.GetNonce(),
+		SubID:   subID,
 		Event:   EventSubscribe,
 		Channel: ChanTicker,
 		Symbol:  symbol,
@@ -45,9 +45,9 @@ func (c *Client) SubscribeTicker(ctx context.Context, symbol string) (string, er
 }
 
 // SubscribeTrades sends a subscription request for the trade feed.
-func (c *Client) SubscribeTrades(ctx context.Context, symbol string) (string, error) {
+func (c *Client) SubscribeTrades(ctx context.Context, symbol, subID string) (string, error) {
 	req := &SubscriptionRequest{
-		SubID:   c.nonce.GetNonce(),
+		SubID:   subID,
 		Event:   EventSubscribe,
 		Channel: ChanTrades,
 		Symbol:  symbol,
@@ -57,12 +57,12 @@ func (c *Client) SubscribeTrades(ctx context.Context, symbol string) (string, er
 
 // SubscribeBook sends a subscription request for market data for a given symbol, at a given frequency, with a given precision, returning no more than priceLevels price entries.
 // Default values are Precision0, Frequency0, and priceLevels=25.
-func (c *Client) SubscribeBook(ctx context.Context, symbol string, precision BookPrecision, frequency BookFrequency, priceLevel int) (string, error) {
+func (c *Client) SubscribeBook(ctx context.Context, symbol string, precision BookPrecision, frequency BookFrequency, priceLevel int, subID string) (string, error) {
 	if priceLevel < 0 {
 		return "", fmt.Errorf("negative price levels not supported: %d", priceLevel)
 	}
 	req := &SubscriptionRequest{
-		SubID:     c.nonce.GetNonce(),
+		SubID:     subID,
 		Event:     EventSubscribe,
 		Channel:   ChanBook,
 		Symbol:    symbol,
@@ -76,9 +76,9 @@ func (c *Client) SubscribeBook(ctx context.Context, symbol string, precision Boo
 }
 
 // SubscribeCandles sends a subscription request for OHLC candles.
-func (c *Client) SubscribeCandles(ctx context.Context, symbol string, resolution bitfinex.CandleResolution) (string, error) {
+func (c *Client) SubscribeCandles(ctx context.Context, symbol string, resolution bitfinex.CandleResolution, subID string) (string, error) {
 	req := &SubscriptionRequest{
-		SubID:   c.nonce.GetNonce(),
+		SubID:   subID,
 		Event:   EventSubscribe,
 		Channel: ChanCandles,
 		Key:     fmt.Sprintf("trade:%s:%s", resolution, symbol),
