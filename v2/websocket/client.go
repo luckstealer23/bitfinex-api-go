@@ -46,6 +46,22 @@ const (
 	PrecisionRawBook BookPrecision = "R0"
 )
 
+// Config flags
+const (
+	DEC_S     Flag = 8
+	TIME_S    Flag = 32
+	TIMESTAMP Flag = 32768
+	SEQ_ALL   Flag = 65536
+	CHECKSUM  Flag = 131072
+)
+
+type Flag int
+
+type ConfigRequest struct {
+	Event string `json:"event"`
+	Flag  Flag   `json:"flags"`
+}
+
 // private type
 type bookPrecision string
 

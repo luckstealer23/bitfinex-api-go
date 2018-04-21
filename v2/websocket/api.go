@@ -14,6 +14,14 @@ func (c *Client) Send(ctx context.Context, msg interface{}) error {
 	return c.asynchronous.Send(ctx, msg)
 }
 
+func (c *Client) SendConfig(ctx context.Context, req *ConfigRequest) error {
+	err := c.Send(ctx, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Subscribe sends a subscription request to the Bitfinex API and tracks the subscription status by ID.
 func (c *Client) Subscribe(ctx context.Context, req *SubscriptionRequest) (string, error) {
 	c.subscriptions.add(req)
