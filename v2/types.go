@@ -228,7 +228,11 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 			AmountOrig: f64ValOrZero(raw[3]),
 			Type:       sValOrEmpty(raw[4]),
 			Status: func() OrderStatus {
-				switch sValOrEmpty(raw[5])[:1] {
+				s := sValOrEmpty(raw[5])
+				if s == "" {
+					return OrderStatusUnknown
+				}
+				switch s[:1] {
 				case "A":
 					return OrderStatusActive
 				case "E":
@@ -263,7 +267,11 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 			TypePrev:   sValOrEmpty(raw[9]),
 			Flags:      i64ValOrZero(raw[12]),
 			Status: func() OrderStatus {
-				switch sValOrEmpty(raw[13])[:1] {
+				s := sValOrEmpty(raw[13])
+				if s == "" {
+					return OrderStatusUnknown
+				}
+				switch s[:1] {
 				case "A":
 					return OrderStatusActive
 				case "E":
@@ -606,7 +614,12 @@ func NewWalletFromRaw(raw []interface{}) (o *Wallet, err error) {
 			Currency:          sValOrEmpty(raw[1]),
 			Balance:           f64ValOrZero(raw[2]),
 			UnsettledInterest: f64ValOrZero(raw[3]),
-			BalanceAvailable:  f64ValOrZero(raw[4]),
+			BalanceAvailable: func() float64 {
+				if raw[4] == nil {
+					return -1
+				}
+				return f64ValOrZero(raw[4])
+			}(),
 		}
 	}
 	return
