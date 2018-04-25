@@ -293,7 +293,6 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 			PlacedID:      i64ValOrZero(raw[25]),
 		}
 	}
-
 	return
 }
 
