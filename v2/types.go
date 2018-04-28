@@ -183,15 +183,18 @@ const (
 	OrderTypeStopLimit            = "STOP LIMIT"
 )
 
-// OrderStatus represents the possible statuses an order can be in.
+// OrderStatus represents the possible states an order can be in.
 type OrderStatus string
 
 const (
-	OrderStatusActive          OrderStatus = "ACTIVE"
-	OrderStatusExecuted        OrderStatus = "EXECUTED"
-	OrderStatusPartiallyFilled OrderStatus = "PARTIALLY FILLED"
-	OrderStatusCanceled        OrderStatus = "CANCELED"
-	OrderStatusUnknown         OrderStatus = "UNKNOWN"
+	OrderStatusPending             OrderStatus = "PENDING"
+	OrderStatusPendingCancellation OrderStatus = "PENDING_CANCELLATION"
+	OrderStatusRejected            OrderStatus = "REJECTED"
+	OrderStatusActive              OrderStatus = "ACTIVE"
+	OrderStatusExecuted            OrderStatus = "EXECUTED"
+	OrderStatusPartiallyFilled     OrderStatus = "PARTIALLY FILLED"
+	OrderStatusCanceled            OrderStatus = "CANCELED"
+	OrderStatusUnknown             OrderStatus = "UNKNOWN"
 )
 
 // Order as returned from the bitfinex websocket service.
@@ -215,6 +218,7 @@ type Order struct {
 	Notify        bool
 	Hidden        bool
 	PlacedID      int64
+	RejectReason  string
 }
 
 // NewOrderFromRaw takes the raw list of values as returned from the websocket
