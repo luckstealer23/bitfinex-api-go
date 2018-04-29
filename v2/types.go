@@ -1179,15 +1179,13 @@ func NewNotificationFromRaw(raw []interface{}) (o *Notification, err error) {
 			if err != nil {
 				return o, err
 			}
-			orderNew := OrderNew(*on)
-			o.NotifyInfo = &orderNew
+			o.NotifyInfo = on
 		case "oc-req":
 			oc, err := NewOrderFromRaw(nraw)
 			if err != nil {
 				return o, err
 			}
-			orderCancel := OrderCancel(*oc)
-			o.NotifyInfo = &orderCancel
+			o.NotifyInfo = oc
 		case "fon-req":
 			fon, err := NewOfferFromRaw(nraw)
 			if err != nil {
