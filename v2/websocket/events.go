@@ -75,6 +75,11 @@ type ConfEvent struct {
 	Flags int `json:"flags"`
 }
 
+type PongEvent struct {
+	CID       int `json:"cid"`
+	TimeStamp int `json:"ts"`
+}
+
 // onEvent handles all the event messages and connects SubID and ChannelID.
 func (c *Client) handleEvent(msg []byte) error {
 	event := &eventType{}
@@ -158,6 +163,17 @@ func (c *Client) handleEvent(msg []byte) error {
 			Term: "conf",
 			Data: &ec,
 		}
+	case "pong":
+		ep := PongEvent{}
+		err = json.Unmarshal(msg, &ep)
+		if err != nil {
+			return err
+		}
+		c.listener <- &Response{
+			Term: "pong",
+			Data: &ep,
+		}
+
 	default:
 		return fmt.Errorf("unknown event: %s", msg) // TODO: or just log?
 	}
