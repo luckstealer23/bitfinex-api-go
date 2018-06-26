@@ -5,7 +5,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/bitfinexcom/bitfinex-api-go/v2"
+	"github.com/luckstealer23/bitfinex-api-go/v2"
 )
 
 // Book precision levels

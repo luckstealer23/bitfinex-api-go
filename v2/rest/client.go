@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/bitfinexcom/bitfinex-api-go/utils"
+	"github.com/luckstealer23/bitfinex-api-go/utils"
 	"io"
 	"io/ioutil"
 	"net/http"

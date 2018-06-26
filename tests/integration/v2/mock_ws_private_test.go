@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	bitfinex "github.com/bitfinexcom/bitfinex-api-go/v2"
-	"github.com/bitfinexcom/bitfinex-api-go/v2/websocket"
+	bitfinex "github.com/luckstealer23/bitfinex-api-go/v2"
+	"github.com/luckstealer23/bitfinex-api-go/v2/websocket"
 )
 
 func TestAuthentication(t *testing.T) {
