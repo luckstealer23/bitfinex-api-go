@@ -1,8 +1,9 @@
 package rest
 
 import (
-	"github.com/luckstealer23/bitfinex-api-go/v2"
 	"path"
+
+	"github.com/luckstealer23/bitfinex-api-go/v2"
 )
 
 // TradeService manages the Trade endpoint.
@@ -30,7 +31,7 @@ func (s *TradeService) All(symbol string) (*bitfinex.TradeSnapshot, error) {
 		}
 	}
 
-	os, err := bitfinex.NewTradeSnapshotFromRaw(symbol, dat)
+	os, err := bitfinex.NewTradeSnapshotFromRaw(int64(0), symbol, dat)
 	if err != nil {
 		return nil, err
 	}

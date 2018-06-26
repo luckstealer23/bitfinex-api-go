@@ -52,7 +52,7 @@ func (b *BookService) All(symbol string, precision BookPrecision, priceLevels in
 		}
 	}
 
-	book, err := bitfinex.NewBookUpdateSnapshotFromRaw(symbol, string(precision), data)
+	book, err := bitfinex.NewBookUpdateSnapshotFromRaw(int64(0), symbol, string(precision), data)
 	if err != nil {
 		return nil, err
 	}
