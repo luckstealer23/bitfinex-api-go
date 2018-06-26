@@ -6,11 +6,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/luckstealer23/bitfinex-api-go/utils"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/luckstealer23/bitfinex-api-go/utils"
 )
 
 var productionBaseURL = "https://api.bitfinex.com/v2/"
@@ -34,6 +35,7 @@ type Client struct {
 	Orders    OrderService
 	Positions PositionService
 	Trades    TradeService
+	Tickers   TickerService
 	Platform  PlatformService
 	Book      BookService
 

@@ -1226,8 +1226,66 @@ type Ticker struct {
 }
 
 type TickerUpdate Ticker
+
 type TickerSnapshot struct {
 	Snapshot []*Ticker
+}
+
+func NewTickerSnapshotFromRawRest(raw [][]interface{}) (*TickerSnapshot, error) {
+	if len(raw) <= 0 {
+		return nil, fmt.Errorf("data slice too short for ticker snapshot: %#v", raw)
+	}
+	snap := make([]*Ticker, 0)
+	for _, f := range raw {
+		c, err := NewTickerFromRawRest(f)
+		if err == nil {
+			snap = append(snap, c)
+		}
+	}
+	return &TickerSnapshot{Snapshot: snap}, nil
+}
+
+func NewTickerFromRawRest(raw []interface{}) (*Ticker, error) {
+	if len(raw) == 11 {
+		t := &Ticker{
+			ChanID:          int64(0),
+			Symbol:          sValOrEmpty(raw[0]),
+			Bid:             f64ValOrZero(raw[1]),
+			BidSize:         f64ValOrZero(raw[2]),
+			Ask:             f64ValOrZero(raw[3]),
+			AskSize:         f64ValOrZero(raw[4]),
+			DailyChange:     f64ValOrZero(raw[5]),
+			DailyChangePerc: f64ValOrZero(raw[6]),
+			LastPrice:       f64ValOrZero(raw[7]),
+			Volume:          f64ValOrZero(raw[8]),
+			High:            f64ValOrZero(raw[9]),
+			Low:             f64ValOrZero(raw[10]),
+		}
+		return t, nil
+	}
+
+	if len(raw) == 13 {
+		t := &Ticker{
+			ChanID:          int64(0),
+			Symbol:          sValOrEmpty(raw[0]),
+			Bid:             f64ValOrZero(raw[1]),
+			BidSize:         f64ValOrZero(raw[2]),
+			BidPeriod:       i64ValOrZero(raw[3]),
+			Ask:             f64ValOrZero(raw[4]),
+			AskSize:         f64ValOrZero(raw[5]),
+			AskPeriod:       i64ValOrZero(raw[6]),
+			DailyChange:     f64ValOrZero(raw[7]),
+			DailyChangePerc: f64ValOrZero(raw[8]),
+			LastPrice:       f64ValOrZero(raw[9]),
+			Volume:          f64ValOrZero(raw[10]),
+			High:            f64ValOrZero(raw[11]),
+			Low:             f64ValOrZero(raw[12]),
+		}
+		return t, nil
+
+	}
+
+	return nil, fmt.Errorf("data slice not right length for ticker, expected %d or %d, got %d: %#v", 11, 13, len(raw), raw)
 }
 
 func NewTickerSnapshotFromRaw(chanID int64, symbol string, raw [][]float64) (*TickerSnapshot, error) {
