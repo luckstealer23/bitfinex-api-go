@@ -108,6 +108,7 @@ func (w *ws) listenWs() {
 
 		select {
 		case <-w.shutdown: // external shutdown request
+			close(w.downstream) // shut down caller's listen channel
 			return
 		default:
 		}
@@ -134,9 +135,9 @@ func (w *ws) Listen() <-chan []byte {
 	return w.downstream
 }
 
+// Moved close(w.downstream) to listenWs() to prevent possible panic there.
 func (w *ws) cleanup(err error) {
-	close(w.downstream) // shut down caller's listen channel
-	close(w.shutdown)   // signal to kill goroutines
+	close(w.shutdown) // signal to kill goroutines
 	if err != nil && !w.userShutdown {
 		w.finished <- err
 	}
