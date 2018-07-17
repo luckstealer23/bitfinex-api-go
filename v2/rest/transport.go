@@ -16,7 +16,6 @@ type HttpTransport struct {
 
 func (h HttpTransport) Request(req Request) ([]interface{}, error) {
 	var raw []interface{}
-
 	rel, err := url.Parse(req.RefURL)
 	if err != nil {
 		return nil, err
@@ -44,9 +43,8 @@ func (h HttpTransport) Request(req Request) ([]interface{}, error) {
 
 	resp, err := h.do(httpReq, &raw)
 	if err != nil {
-		return nil, fmt.Errorf("could not parse response: %s", resp.Response.Status)
+		return nil, fmt.Errorf("could not parse response: %s, %v, %v", resp.Response.Status, resp.Response.Body, err)
 	}
-
 	return raw, nil
 }
 

@@ -78,6 +78,7 @@ func NewClientWithSynchronousNonce(sync Synchronous, nonce utils.NonceGenerator)
 	}
 	c.Orders = OrderService{Synchronous: c, requestFactory: c}
 	c.Book = BookService{Synchronous: c}
+	c.Tickers = TickerService{Synchronous: c}
 	c.Trades = TradeService{Synchronous: c, requestFactory: c}
 	c.Platform = PlatformService{Synchronous: c}
 	c.Positions = PositionService{Synchronous: c, requestFactory: c}

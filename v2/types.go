@@ -193,6 +193,7 @@ const (
 	OrderStatusActive              OrderStatus = "ACTIVE"
 	OrderStatusExecuted            OrderStatus = "EXECUTED"
 	OrderStatusPartiallyFilled     OrderStatus = "PARTIALLY FILLED"
+	OrderStatusPostonlyCancelled   OrderStatus = "POSTONLY CANCELLED"
 	OrderStatusCanceled            OrderStatus = "CANCELED"
 	OrderStatusUnknown             OrderStatus = "UNKNOWN"
 )
@@ -242,7 +243,14 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 				case "E":
 					return OrderStatusExecuted
 				case "P":
-					return OrderStatusPartiallyFilled
+					switch s[1:2] {
+					case "A":
+						return OrderStatusPartiallyFilled
+					case "O":
+						return OrderStatusPostonlyCancelled
+					default:
+						return OrderStatusUnknown
+					}
 				case "C":
 					return OrderStatusCanceled
 				default:
@@ -281,7 +289,14 @@ func NewOrderFromRaw(raw []interface{}) (o *Order, err error) {
 				case "E":
 					return OrderStatusExecuted
 				case "P":
-					return OrderStatusPartiallyFilled
+					switch s[1:2] {
+					case "A":
+						return OrderStatusPartiallyFilled
+					case "O":
+						return OrderStatusPostonlyCancelled
+					default:
+						return OrderStatusUnknown
+					}
 				case "C":
 					return OrderStatusCanceled
 				default:

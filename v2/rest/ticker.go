@@ -1,8 +1,6 @@
 package rest
 
 import (
-	"net/url"
-
 	"github.com/luckstealer23/bitfinex-api-go/v2"
 )
 
@@ -11,14 +9,13 @@ type TickerService struct {
 }
 
 func (t *TickerService) All(symbols ...string) (*bitfinex.TickerSnapshot, error) {
-	req := NewRequestWithMethod("tickers", "GET")
-	req.Params = make(url.Values)
-
+	s := "?symbols="
 	for _, symbol := range symbols {
-		req.Params.Add("symbols", symbol)
+		s = s + "," + symbol
 	}
-	raw, err := t.Request(req)
+	req := NewRequestWithMethod("tickers"+s, "GET")
 
+	raw, err := t.Request(req)
 	if err != nil {
 		return nil, err
 	}
