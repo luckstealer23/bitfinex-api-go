@@ -16,6 +16,7 @@ type HttpTransport struct {
 
 func (h HttpTransport) Request(req Request) ([]interface{}, error) {
 	var raw []interface{}
+
 	rel, err := url.Parse(req.RefURL)
 	if err != nil {
 		return nil, err
@@ -36,14 +37,20 @@ func (h HttpTransport) Request(req Request) ([]interface{}, error) {
 
 	u := h.BaseURL.ResolveReference(rel)
 	httpReq, err := http.NewRequest(req.Method, u.String(), body)
-
+	for k, v := range req.Headers {
+		httpReq.Header.Add(k, v)
+	}
 	if err != nil {
 		return nil, err
 	}
 
 	resp, err := h.do(httpReq, &raw)
 	if err != nil {
+		// if resp != nil {
+		// 	return nil, fmt.Errorf("%v", err)
+		// } else {
 		return nil, fmt.Errorf("could not parse response: %s, %v, %v", resp.Response.Status, resp.Response.Body, err)
+		// }
 	}
 	return raw, nil
 }
